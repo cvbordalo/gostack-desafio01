@@ -6,6 +6,15 @@ server.use(express.json());
 
 const projects = [];
 
+// Middleware to check if a project exists
+function checkProjectExists(req, res, next) {
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'Project does not exists'})
+  }
+
+  return next();
+};
+
 // lists all projects
 server.get('/projects', (req, res) => {
   return res.json(projects);
@@ -27,7 +36,7 @@ server.post('/projects', (req, res) => {
 });
 
 // updates projects
-server.put('/projects/:id', (req, res) => {
+server.put('/projects/:id', checkProjectExists, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
@@ -39,7 +48,7 @@ server.put('/projects/:id', (req, res) => {
 });
 
 // deletes projects
-server.delete('/projects/:id', (req, res) => {
+server.delete('/projects/:id', checkProjectExists, (req, res) => {
   const { id } = req.params;
 
   const projectIndex = projects.findIndex(project => project.id == id);
@@ -50,7 +59,7 @@ server.delete('/projects/:id', (req, res) => {
 });
 
 //creates tasks
-server.post('/projects/:id/tasks', (req, res) => {
+server.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
   const { task } = req.body;
   const { id } = req.params;
 
