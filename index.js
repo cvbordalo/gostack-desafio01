@@ -6,7 +6,17 @@ server.use(express.json());
 
 const projects = [];
 
-// Middleware to check if a project exists
+// counts and logs how many requisitions are made
+function logRequests(req, res, next) {
+
+  console.count("Número de requisições");
+
+  return next();
+}
+
+server.use(logRequests);
+
+// middleware to check if a project exists
 function checkProjectExists(req, res, next) {
   if (!req.body.id) {
     return res.status(400).json({ error: 'Project does not exists'})
